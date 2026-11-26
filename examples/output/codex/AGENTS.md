@@ -2,7 +2,7 @@
 
 # Global agent instructions
 
-<!-- source: sections[1]/00-collaboration/AGENTS.md.d/10-user-intent.md -->
+<!-- source: input-sections/00-shared/AGENTS.md.d/10-user-intent.md -->
 
 ## Understand user intent
 
@@ -22,7 +22,7 @@
 - End a finite request after verifying its requested result. Keep a continuing assignment active until its agreed stopping condition or an explicit stop request.
 - Respect required pauses, permissions, safety rules, and runtime limits. Explain any limit that prevents further work or waiting. Do not invent work or expand the assignment to keep busy.
 
-<!-- source: sections[1]/10-writing/AGENTS.md.d/12-effective-prose.md -->
+<!-- source: input-sections/00-shared/AGENTS.md.d/12-effective-prose.md -->
 
 ## Effective prose
 
@@ -71,7 +71,7 @@ For substantive writing or skill instructions, read:
 - `{{%_resources_%}}/communication-principles/effective-prose.md` for claims supported by evidence and honest treatment of uncertainty.
 - `{{%_resources_%}}/communication-principles/technical-writing-ousterhout.md` for explaining complex technical ideas.
 
-<!-- source: sections[2]/30-team-review/AGENTS.md.d/21-social-capital.md -->
+<!-- source: input-sections/20-work/AGENTS.md.d/21-social-capital.md -->
 
 ## Social capital and people's time
 
@@ -104,7 +104,7 @@ For substantive writing or skill instructions, read:
 - When preparing a technical question or asking someone for help, read `{{%_resources_%}}/communication-principles/asking-good-questions.md`.
 - For examples and further guidance, see `{{%_resources_%}}/communication-principles/public-communication-and-social-capital.md`.
 
-<!-- source: sections[1]/00-collaboration/AGENTS.md.d/22-theory-of-mind.md -->
+<!-- source: input-sections/00-shared/AGENTS.md.d/22-theory-of-mind.md -->
 
 ## Theory of mind
 
@@ -139,7 +139,7 @@ Write so someone new to the subject can understand the outcome without private c
 
 What you think someone expects does not give you permission to act on their behalf. Ask one focused question when intent or permission remains unclear.
 
-<!-- source: sections[1]/20-engineering/AGENTS.md.d/30-engineering-practices.md -->
+<!-- source: input-sections/00-shared/AGENTS.md.d/30-engineering-practices.md -->
 
 ## Engineering practices
 
@@ -148,7 +148,7 @@ What you think someone expects does not give you permission to act on their beha
 - Use [$example-skills:VCS_Checkpoint](skill://example-skills/VCS_Checkpoint) when the user asks to save a checkpoint.
 - To read the installed design instructions directly, open `{{%_skills_%}}/Code_DesignPlan/SKILL.md`.
 
-<!-- source: sections[1]/20-engineering/AGENTS.md.d/31-code-projects.md -->
+<!-- source: input-sections/00-shared/AGENTS.md.d/31-code-projects.md -->
 
 ## Code projects and local checkouts
 
@@ -186,7 +186,7 @@ Read the applicable instructions again when changing projects, worktrees, or dir
 - Preserve the host and every namespace segment for every Git host. HTTPS and SSH URLs for the same repository must resolve to the same checkout.
 - For example, both `https://github.com/NonLogicalDev/gymnasium` and `git@github.com:NonLogicalDev/gymnasium.git` map to `<projects-home>/remote/github.com/NonLogicalDev/gymnasium/`.
 
-<!-- source: sections[2]/30-team-review/AGENTS.md.d/40-working-agreement.md -->
+<!-- source: input-sections/20-work/AGENTS.md.d/40-working-agreement.md -->
 
 ## Team workflow
 
@@ -194,14 +194,14 @@ Read the applicable instructions again when changing projects, worktrees, or dir
 - Give each actionable finding a location, a trigger, and a concrete impact. Keep optional improvements separate.
 - Read the [team review checklist]({{%_resources_%}}/engineering-practices/team-review.md) before handing a change to reviewers.
 
-<!-- source: sections[2]/40-project-delivery/AGENTS.md.d/50-delivery.md -->
+<!-- source: input-sections/20-work/AGENTS.md.d/50-delivery.md -->
 
 ## Deliver a reviewed change
 
 - Use an editable [$example-skills:Agent_DeliveryPlan](skill://example-skills/Agent_DeliveryPlan) when several PRs need a landing order.
 - Record the dependencies and blockers reviewers can verify. Keep conversation history out of the delivery plan.
 
-<!-- source: sections[2]/40-project-delivery/AGENTS.md.d/60-inline-review.md -->
+<!-- source: input-sections/20-work/AGENTS.md.d/60-inline-review.md -->
 
 ## Inline review
 

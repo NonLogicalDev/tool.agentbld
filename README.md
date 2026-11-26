@@ -18,13 +18,12 @@ again, even if the source files have changed.
 
 ## Try it
 
-The bundled example combines a shared base with instructions for work. From an agentbld checkout, run this with
-Nix to preview the result. If you installed the binary, use `agentbld` in place of `nix run . --`.
+The bundled example combines a shared base with instructions for work. [Install agentbld](#run-or-install), then
+run this from the repository root to preview the result.
 
 ```sh
 demo=.tmp/agentbld-demo
-nix run . -- render --sections-dir examples/input-sections/shared \
-  --sections-dir examples/input-sections/work --render-dir "$demo" \
+agentbld render --sections-dir examples/input-sections --render-dir "$demo" \
   --mode=codex --mode=claude --mode=opencode
 ls "$demo/latest"
 ```
@@ -34,10 +33,27 @@ This command writes to the demo directory and leaves your agent configuration di
 
 - [Example inputs](examples/input-sections/) show the shared sections and the separate home and work additions.
 - [Rendered work output](examples/output/) shows the assembled instructions, skills, and bundled references.
-- [Example walkthrough](examples/README.md) shows how to render both setups and compare the same skill at home
-  and at work.
+- [Example walkthrough](examples/README.md) shows how home and work instructions extend the same skill.
 
 ## Run or install
+
+### Prebuilt binaries
+
+Download the build for your platform from [GitHub Releases][github-releases].
+
+### Go
+
+**Prerequisite** — Go 1.24 or later. Add `$GOBIN` to `PATH`, or use `$(go env GOPATH)/bin` if `GOBIN` is unset.
+
+| Use | Version suffix |
+| --- | --- |
+| Track the main branch | `@main` |
+| Pin a release | `@vX.Y.Z` |
+
+```sh
+go run github.com/NonLogicalDev/tool.agentbld/cmd/agentbld@main --help
+go install github.com/NonLogicalDev/tool.agentbld/cmd/agentbld@main
+```
 
 ### Nix flake
 
@@ -65,24 +81,10 @@ pkgs.callPackage ./nix/package.nix { }
 
 The recipe accepts `source`, `version`, and `revision` overrides for a pinned package.
 
-### Go
-
-**Prerequisite** — Go 1.24 or later. Add `$GOBIN` to `PATH`, or use `$(go env GOPATH)/bin` if `GOBIN` is unset.
-
-| Use | Version suffix |
-| --- | --- |
-| Track the main branch | `@main` |
-| Pin a release once tagged | `@vX.Y.Z` |
-
-```sh
-go run github.com/NonLogicalDev/tool.agentbld/cmd/agentbld@main --help
-go install github.com/NonLogicalDev/tool.agentbld/cmd/agentbld@main
-```
-
 ## Configuration layout
 
-A section is a numbered directory such as `10-team`. Agentbld processes sections in name order within each source
-directory. Pass `--sections-dir` more than once to add source directories in order, starting with the shared base.
+A section is a numbered directory such as `20-work`. Pass the parent directory with `--sections-dir`.
+Agentbld processes its sections in name order.
 
 Later sections can replace an instruction fragment or resource with the same path, or add new fragments to a skill.
 Filter a fragment with `harnesses` in its YAML frontmatter. See the [source sections guide][source-sections].
@@ -127,7 +129,7 @@ Each harness defines its instruction filename and can add files such as command 
 
 - Put a complete skill in `skills/<name>/SKILL.md` or split it into ordered files under `SKILL.md.d/`.
 - To extend a shared skill, put a fragment under `skills/<name>/SKILL.md.d/` in a later section. Use the same
-  skill name. Keep work instructions in a separate source directory and include it with `--sections-dir` at work.
+  skill name. A later fragment with the same filename replaces the earlier one.
 - The example extends the [shared design planning skill][design-base] with a [team review fragment][design-team]
   and a delivery fragment. Render combines them into [one `SKILL.md`][design-rendered].
 
@@ -326,9 +328,10 @@ goreleaser release --config .github/actions/goreleaser.yaml --snapshot --clean
 
 Agentbld was extracted from [NonLogicalDev/conf.agents][original-source] with its Git history.
 
+[github-releases]: https://github.com/NonLogicalDev/tool.agentbld/releases
 [source-sections]: https://github.com/NonLogicalDev/conf.agents#source-sections
 [codex-config]: https://github.com/NonLogicalDev/conf.agents#codex
 [original-source]: https://github.com/NonLogicalDev/conf.agents/tree/819153a/utils/agentbld
-[design-base]: examples/input-sections/shared/20-engineering/skills/Code_DesignPlan/SKILL.md
-[design-team]: examples/input-sections/work/30-team-review/skills/Code_DesignPlan/SKILL.md.d/20-review-readiness.md
+[design-base]: examples/input-sections/00-shared/skills/Code_DesignPlan/SKILL.md
+[design-team]: examples/input-sections/20-work/skills/Code_DesignPlan/SKILL.md.d/20-planning-practices.md
 [design-rendered]: examples/output/claude/skills/Code_DesignPlan/SKILL.md
