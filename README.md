@@ -1,19 +1,41 @@
 # agentbld
 
-`agentbld` helps declaratively manage agent instructions, skills, and resources across harnesses.
+Agentbld assembles shared instructions, skills, and reference files into the configuration each coding agent
+expects. You can layer in your own preferences and adapt the same setup for different teams or projects.
 
-Gives you the tools to organize, share and blend your agent context from multiple sources.
+Start with a skill you found or wrote. Keep the base skill shareable and add instructions for the way you work.
+For example, use a shared design planning skill at home and extend it at work with your team’s review and
+rollout guidance.
+Agentbld combines the base skill with the sections you choose when you render.
 
 <p align="center">
-  <img src="assets/mascot.png" width="256" alt="Agentbld mascot with a folder connected to three harness icons">
+  <img src="assets/mascot.png" width="256" alt="Agentbld mascot with a folder connected to coding agent icons">
 </p>
 
-- **Layer your configuration.** Manage agent instructions & skills in layers, compose your agent instructions from multiple files. Compose / override layers from multiple sources.
-- **Tight controll.** Enable/Disable sections, or only enable them for certain harnesses.
-- **Render a generation.** Keep generations for your chosen harnesses as a numbered, read-only snapshots, to avoid accidental modifications, and simplify rollback.
-- **Sync by number.** Quickly switch between generations for quick rollback and comparisons.
+`render` creates a numbered, read-only snapshot called a **generation**. You can inspect it before using
+`sync <number>` to activate it in the tools you choose. To return to an earlier setup, sync its saved generation
+again, even if the source files have changed.
 
-Break up your configuration into sections to enable easy sharing, re-mixing, and blending configuration across work, home and other different setups that require tailoring.
+## Try it
+
+The bundled example combines a shared base with instructions for work. From an agentbld checkout, run this with
+Nix to preview the result. If you installed the binary, use `agentbld` in place of `nix run . --`.
+
+```sh
+demo=.tmp/agentbld-demo
+nix run . -- render --sections-dir examples/input-sections/shared \
+  --sections-dir examples/input-sections/work --render-dir "$demo" \
+  --mode=codex --mode=claude --mode=opencode
+ls "$demo/latest"
+```
+
+Open a generated instruction file such as `$demo/latest/codex/AGENTS.md` to see the assembled instructions.
+This command writes to the demo directory and leaves your agent configuration directories alone.
+
+- [Example inputs](examples/input-sections/) show the shared sections and the separate home and work additions.
+- [Rendered work output](examples/output/) shows the assembled instructions, skills, and bundled references.
+- [Example walkthrough](examples/README.md) shows how to render both setups and compare the same skill at home
+  and at work.
 
 ## Run or install
 
@@ -59,7 +81,11 @@ go install github.com/NonLogicalDev/tool.agentbld/cmd/agentbld@main
 
 ## Configuration layout
 
-- Pass your own sections directory with `--sections-dir`. See [source sections][source-sections] for the format.
+A section is a numbered directory such as `10-team`. Agentbld processes sections in name order within each source
+directory. Pass `--sections-dir` more than once to add source directories in order, starting with the shared base.
+
+Later sections can replace an instruction fragment or resource with the same path, or add new fragments to a skill.
+Filter a fragment with `harnesses` in its YAML frontmatter. See the [source sections guide][source-sections].
 
 ```text
 sections/
@@ -89,23 +115,36 @@ ${XDG_STATE_HOME:-$HOME/.local/state}/agentbld/
 ├── latest -> {yyyy}-{mm}-{dd}__{NN}/
 └── {yyyy}-{mm}-{dd}__{NN}/
     ├── config.json
-    ├── codex/           # If selected
-    │   ├── AGENTS.md
-    │   ├── skills/
-    │   ├── plugin-skillset/  # If a plugin is selected
-    │   ├── resources/
-    │   └── rules/
-    ├── opencode/        # If selected
-    │   ├── AGENTS.md
-    │   ├── skills/
-    │   ├── resources/
-    │   └── plugins/
-    └── claude/          # If selected
-        ├── CLAUDE.md
+    └── <harness>/       # One directory per selected harness
+        ├── <instruction-file>
         ├── skills/
-        ├── plugin-skillset/  # If a plugin is selected
         └── resources/
 ```
+
+Each harness defines its instruction filename and can add files such as command rules or plugin packages.
+
+### Skill fragments
+
+- Put a complete skill in `skills/<name>/SKILL.md` or split it into ordered files under `SKILL.md.d/`.
+- To extend a shared skill, put a fragment under `skills/<name>/SKILL.md.d/` in a later section. Use the same
+  skill name. Keep work instructions in a separate source directory and include it with `--sections-dir` at work.
+- The example extends the [shared design planning skill][design-base] with a [team review fragment][design-team]
+  and a delivery fragment. Render combines them into [one `SKILL.md`][design-rendered].
+
+### Reference placeholders
+
+- **Skill path in instructions** — `{{%_skills_%}}/Code_DesignPlan/SKILL.md` resolves at sync time.
+  - With `--codex-dir ~/.codex-work`, it becomes `~/.codex-work/skills/Code_DesignPlan/SKILL.md`.
+- **Resource path in instructions** — `{{%_resources_%}}/engineering-practices/small-changes.md` resolves under
+  the harness’s `resources/` directory at sync time.
+- **Resource path in a skill** — `{{%_resources_%}}/engineering-practices/team-review.md` becomes
+  `resources/engineering-practices/team-review.md` at render time. Agentbld bundles the checklist inside the skill.
+- **Link to a skill** — use `[$@:VCS_Checkpoint](skill://@/VCS_Checkpoint)` in instructions or another skill.
+  - Render resolves it for the harness and plugin. In the example Codex plugin, the link points to
+    `skill://example-skills/VCS_Checkpoint`.
+- **Embed instructions in a skill** — `{{%_agents_%}}` in `Agent_Guidance` inserts the assembled instructions.
+
+See the [runnable examples](examples/#reference-and-skill-examples) for the source fragments and generated files.
 
 ## Operations
 
@@ -200,12 +239,14 @@ agentbld sync 3 --profile default
 
 ## Harnesses
 
-- **Render** — pass `--mode=<harness>[:<JSON object>]` once per harness.
-- **Sync**
-  - Supply destination flags. Sync resolves placeholders for those destinations.
-  - Unrelated entries stay in place. Unmanaged conflicts block sync.
-- **Plugin packaging** — Codex and Claude Code use source `skills/` and render a separate `plugin-skillset/`.
-  Sync writes local packages. Register or install them through the harness.
+Run `agentbld modes` to see the harnesses and options available in your build.
+
+Use `--mode=<harness>[:<JSON object>]` once per harness to choose what it receives. When you sync, agentbld resolves
+path placeholders for each destination and links the selected files into its configuration directory. It reports a
+conflict if an unmanaged file is already at a path it needs.
+
+Codex and Claude Code can also package source skills as a plugin. Render saves the plugin’s skills under
+`plugin-skillset/`. Sync writes the local package so you can register or install it through the harness.
 
 ### Codex
 
@@ -262,10 +303,9 @@ claude plugin install skillset@agentbld
 - **Entry point and CLI** — `cmd/agentbld/main.go` and `internal/`.
 - **Shared engine code** — `internal/engine/` handles source layering, generation storage, replay, and managed links.
   - Shared filesystem helpers also live here.
-- **Harness engines** — under `internal/harnesses/`
-  - `harness_codex/`
-  - `harness_claude/`
-  - `harness_opencode/`
+- **Harness adapters** — to add a harness, create a package under [`internal/harnesses/`](internal/harnesses/).
+  - Implement the [`engine.Handler`](internal/engine/harness.go) operations for rendering and syncing its files.
+  - Register the handler and any CLI options in [`internal/harness_registry.go`](internal/harness_registry.go).
 - **Tests**
   - Unit tests live beside the code they exercise.
   - CLI integration tests build and run the binary from `internal/integration_tests/`.
@@ -289,3 +329,6 @@ Agentbld was extracted from [NonLogicalDev/conf.agents][original-source] with it
 [source-sections]: https://github.com/NonLogicalDev/conf.agents#source-sections
 [codex-config]: https://github.com/NonLogicalDev/conf.agents#codex
 [original-source]: https://github.com/NonLogicalDev/conf.agents/tree/819153a/utils/agentbld
+[design-base]: examples/input-sections/shared/20-engineering/skills/Code_DesignPlan/SKILL.md
+[design-team]: examples/input-sections/work/30-team-review/skills/Code_DesignPlan/SKILL.md.d/20-review-readiness.md
+[design-rendered]: examples/output/claude/skills/Code_DesignPlan/SKILL.md
