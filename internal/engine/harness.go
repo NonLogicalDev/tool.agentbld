@@ -26,6 +26,7 @@ type Handler struct {
 	Restore func(string, Snapshot) (*RenderPlan, error)
 	Prepare func(Registry, string, string, Snapshot, *RenderPlan, Destination) (func() error, error)
 
+	// ResolveDestination accepts a saved mode. A nil mode resolves all paths for inspection.
 	ResolveDestination func(any) (Destination, error)
 	LoadProfile        func(map[string]json.RawMessage) error
 	ConfigReport       func(any, Destination) (fields map[string]any, destinations map[string]string)

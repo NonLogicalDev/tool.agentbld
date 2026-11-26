@@ -204,7 +204,7 @@ func prepareCodex(registry engine.Registry, gen, root string, snap engine.Snapsh
 		}
 	}
 	payload := filepath.Join(gen, "codex")
-	target := filepath.Join(root, ".targets", "codex", engine.TargetHash(dest.Config), filepath.Base(gen))
+	target := filepath.Join(root, engine.TargetsDir, "codex", engine.TargetHash(dest.Config), filepath.Base(gen))
 	var changes syncPlan
 	changes.manageAgents, changes.manageSkills = c.Agents, manageSkills
 	var err error

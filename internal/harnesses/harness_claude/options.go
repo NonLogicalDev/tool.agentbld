@@ -20,10 +20,10 @@ func (o *Options) resolveDestination(value any) (engine.Destination, error) {
 	if err != nil {
 		return engine.Destination{}, err
 	}
-	saved := value.(Snapshot)
-	dest := engine.Destination{Config: config, UsesConfig: saved.Agents || saved.Skills,
+	saved, hasMode := value.(Snapshot)
+	dest := engine.Destination{Config: config, UsesConfig: !hasMode || saved.Agents || saved.Skills,
 		Profile: map[string]string{"claude_dir": config}}
-	if saved.Plugin != "none" {
+	if !hasMode || saved.Plugin != "none" {
 		dest.Marketplace, err = claudeMarketplacePath(o.ClaudeMarketplaceDir)
 		if err != nil {
 			return engine.Destination{}, err

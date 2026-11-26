@@ -13,6 +13,8 @@ import (
 	"syscall"
 )
 
+const TargetsDir = ".targets"
+
 const targetInfoFile = ".target.json"
 
 type targetInfo struct {
@@ -155,7 +157,7 @@ func targetMatches(root string, p *RenderPlan, config, info []byte) bool {
 // PreflightHarnessTarget verifies a previously materialized snapshot without
 // creating the destination. All harnesses can be checked before activation.
 func (registry Registry) PreflightHarnessTarget(root, gen, harness, destination string, p *RenderPlan) error {
-	for _, dir := range []string{filepath.Join(root, ".targets"), filepath.Join(root, ".targets", harness), filepath.Join(root, ".targets", harness, TargetHash(destination))} {
+	for _, dir := range []string{filepath.Join(root, TargetsDir), filepath.Join(root, TargetsDir, harness), filepath.Join(root, TargetsDir, harness, TargetHash(destination))} {
 		if err := ValidDir(dir, "target directory"); err != nil {
 			return err
 		}
@@ -163,7 +165,7 @@ func (registry Registry) PreflightHarnessTarget(root, gen, harness, destination 
 	if err := ValidDir(destination, harness+" destination"); err != nil {
 		return err
 	}
-	target := filepath.Join(root, ".targets", harness, TargetHash(destination), filepath.Base(gen))
+	target := filepath.Join(root, TargetsDir, harness, TargetHash(destination), filepath.Base(gen))
 	_, err := os.Lstat(target)
 	if os.IsNotExist(err) {
 		return nil
@@ -200,8 +202,8 @@ func (registry Registry) MaterializeHarnessTarget(root, gen, harness, destinatio
 	if e != nil {
 		return "", nil, e
 	}
-	parent := filepath.Join(root, ".targets", harness, TargetHash(destination))
-	for _, dir := range []string{filepath.Join(root, ".targets"), filepath.Join(root, ".targets", harness), parent} {
+	parent := filepath.Join(root, TargetsDir, harness, TargetHash(destination))
+	for _, dir := range []string{filepath.Join(root, TargetsDir), filepath.Join(root, TargetsDir, harness), parent} {
 		if e = ValidDir(dir, "target directory"); e != nil {
 			return "", nil, e
 		}
@@ -285,7 +287,7 @@ func (registry Registry) MaterializeHarnessTarget(root, gen, harness, destinatio
 // pruneTargets inspects every recorded destination before removing any stale
 // target of an eligible generation. Unknown or inaccessible state blocks prune.
 func (registry Registry) pruneTargets(root string, generations []generation) error {
-	targetsRoot := filepath.Join(root, ".targets")
+	targetsRoot := filepath.Join(root, TargetsDir)
 	if err := ValidDir(targetsRoot, "targets root"); err != nil {
 		return err
 	}

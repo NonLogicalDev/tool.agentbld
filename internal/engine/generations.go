@@ -12,6 +12,8 @@ import (
 	"time"
 )
 
+const LatestAlias = "latest"
+
 var generationPattern = regexp.MustCompile(`^(\d{4}-\d{2}-\d{2})__(\d{2,})$`)
 
 type generation struct {
@@ -43,7 +45,7 @@ func (registry Registry) DiscoverGenerations(root string) ([]generation, error) 
 		if strings.HasPrefix(d.Name(), ".") {
 			continue
 		}
-		if d.Name() == "latest" {
+		if d.Name() == LatestAlias {
 			if !IsLink(path) {
 				return nil, fmt.Errorf("latest generation alias is not a symlink: %s", path)
 			}
@@ -224,7 +226,7 @@ func SummaryPlans(plans map[string]*RenderPlan, gen, status string) {
 	fmt.Printf("rendered agentbld: layers=%d fragments=%d skills=%d resources=%d generation=%s status=%s destination=%s\n", layers, fragments, skills, resources, name, status, dest)
 }
 func AliasMatches(root, gen string) bool {
-	target, e := os.Readlink(filepath.Join(root, "latest"))
+	target, e := os.Readlink(filepath.Join(root, LatestAlias))
 	return e == nil && target == filepath.Base(gen)
 }
 func updateAlias(root, gen string) error {
@@ -236,11 +238,11 @@ func updateAlias(root, gen string) error {
 		return e
 	}
 	defer os.RemoveAll(tmp)
-	candidate := filepath.Join(tmp, "latest")
+	candidate := filepath.Join(tmp, LatestAlias)
 	if e = os.Symlink(filepath.Base(gen), candidate); e != nil {
 		return e
 	}
-	return os.Rename(candidate, filepath.Join(root, "latest"))
+	return os.Rename(candidate, filepath.Join(root, LatestAlias))
 }
 
 // PerformRenderPlans reuses an identical immutable generation or stages a new one

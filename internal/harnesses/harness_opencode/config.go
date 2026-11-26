@@ -255,7 +255,7 @@ func prepareOpenCode(registry engine.Registry, gen, root string, saved engine.Sn
 	}
 	destination := destinations.Config
 	payload := filepath.Join(gen, "opencode")
-	target := filepath.Join(root, ".targets", "opencode", engine.TargetHash(destination), filepath.Base(gen))
+	target := filepath.Join(root, engine.TargetsDir, "opencode", engine.TargetHash(destination), filepath.Base(gen))
 	var instructions engine.AgentsPlan
 	var err error
 	if config.Agents {

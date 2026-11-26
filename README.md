@@ -1,8 +1,49 @@
 # agentbld
 
-Render layered agent configuration into read-only generations and sync them to your chosen harnesses.
+`agentbld` helps declaratively manage agent instructions, skills, and resources across harnesses.
+
+Gives you the tools to organize, share and blend your agent context from multiple sources.
+
+<p align="center">
+  <img src="assets/mascot.png" width="256" alt="Agentbld mascot with a folder connected to three harness icons">
+</p>
+
+- **Layer your configuration.** Manage agent instructions & skills in layers, compose your agent instructions from multiple files. Compose / override layers from multiple sources.
+- **Tight controll.** Enable/Disable sections, or only enable them for certain harnesses.
+- **Render a generation.** Keep generations for your chosen harnesses as a numbered, read-only snapshots, to avoid accidental modifications, and simplify rollback.
+- **Sync by number.** Quickly switch between generations for quick rollback and comparisons.
+
+Break up your configuration into sections to enable easy sharing, re-mixing, and blending configuration across work, home and other different setups that require tailoring.
 
 ## Run or install
+
+### Nix flake
+
+```sh
+nix run github:NonLogicalDev/tool.agentbld -- --help
+nix profile install github:NonLogicalDev/tool.agentbld
+```
+
+From a checkout, run `nix run . -- --version` or build with `nix build .`.
+
+### Nix without flakes
+
+From a checkout with `nixpkgs` in `NIX_PATH`:
+
+```sh
+nix-build
+./result/bin/agentbld --version
+```
+
+Both entry points use [nix/package.nix](nix/package.nix). To reuse the recipe in a Nix configuration:
+
+```nix
+pkgs.callPackage ./nix/package.nix { }
+```
+
+The recipe accepts `source`, `version`, and `revision` overrides for a pinned package.
+
+### Go
 
 **Prerequisite** — Go 1.24 or later. Add `$GOBIN` to `PATH`, or use `$(go env GOPATH)/bin` if `GOBIN` is unset.
 
@@ -95,6 +136,18 @@ agentbld check --sections-dir "$PWD/sections"
 agentbld render --sync --sections-dir "$PWD/sections"
 agentbld sync 1  # Replace 1 with the ordinal printed by render.
 ```
+
+## Configuration paths
+
+```sh
+agentbld config paths
+agentbld config paths --sections-dir ./sections --render-dir ~/agentbld-state --codex-dir ~/.codex-work
+```
+
+- `effective` includes path flags and the current environment.
+- `defaults` uses the current environment with all path flags omitted. There is no default sections directory.
+- Both list the state paths, profile directory, and every harness’s destinations, including marketplaces.
+- The command reads path options only. It creates no files and loads no saved profile.
 
 ## Sync profiles
 
@@ -217,6 +270,17 @@ claude plugin install skillset@agentbld
   - Unit tests live beside the code they exercise.
   - CLI integration tests build and run the binary from `internal/integration_tests/`.
   - Run `go test ./...` from the repository root.
+
+## Releases
+
+- Push a semantic version tag such as `v0.1.0` to trigger the GitHub release workflow.
+- GoReleaser packages macOS and Linux binaries for amd64 and arm64, with SHA-256 checksums.
+- `agentbld --version` prints the release version and full commit hash.
+- Build release artifacts locally with a snapshot.
+
+```sh
+goreleaser release --config .github/actions/goreleaser.yaml --snapshot --clean
+```
 
 ## History
 

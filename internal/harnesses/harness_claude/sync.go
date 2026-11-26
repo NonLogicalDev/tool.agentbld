@@ -40,7 +40,7 @@ func prepareClaude(registry engine.Registry, gen, root string, s engine.Snapshot
 		}
 	}
 	payload := filepath.Join(gen, "claude")
-	target := filepath.Join(root, ".targets", "claude", engine.TargetHash(destination), filepath.Base(gen))
+	target := filepath.Join(root, engine.TargetsDir, "claude", engine.TargetHash(destination), filepath.Base(gen))
 	var instructions engine.AgentsPlan
 	var resources, skills engine.LinkPlan
 	var err error

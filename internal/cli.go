@@ -13,17 +13,19 @@ import (
 )
 
 type cli struct {
-	Harness      harnessOptions  `embed:""`
-	SectionsDirs []string        `name:"sections-dir" type:"path" sep:"none" help:"Sections directory; repeat in precedence order."`
-	RenderDir    string          `type:"path" help:"Rendered generations directory (default: $XDG_STATE_HOME/agentbld or $HOME/.local/state/agentbld)."`
-	Mode         []string        `name:"mode" sep:"none" help:"Harness mode; repeat once per harness. For sync, bare names select saved harnesses. Run 'agentbld modes' for options."`
-	Render       renderFlags     `cmd:"" help:"Create or reuse an immutable generation."`
-	Check        struct{}        `cmd:"" help:"Check whether the latest generation matches the source."`
-	Sync         generationFlags `cmd:"" help:"Activate an existing generation by number."`
-	Profile      profileCommands `cmd:"" help:"Inspect saved sync profiles."`
-	Prune        struct{}        `cmd:"" help:"Remove old, inactive generations."`
-	Reset        struct{}        `cmd:"" help:"Back up configuration and reset managed links."`
-	Modes        struct{}        `cmd:"" help:"Explain the available modes and their options."`
+	Version      kong.VersionFlag `help:"Print version and build revision."`
+	Harness      harnessOptions   `embed:""`
+	SectionsDirs []string         `name:"sections-dir" type:"path" sep:"none" help:"Sections directory; repeat in precedence order."`
+	RenderDir    string           `type:"path" help:"Rendered generations directory (default: $XDG_STATE_HOME/agentbld or $HOME/.local/state/agentbld)."`
+	Mode         []string         `name:"mode" sep:"none" help:"Harness mode; repeat once per harness. For sync, bare names select saved harnesses. Run 'agentbld modes' for options."`
+	Render       renderFlags      `cmd:"" help:"Create or reuse an immutable generation."`
+	Check        struct{}         `cmd:"" help:"Check whether the latest generation matches the source."`
+	Sync         generationFlags  `cmd:"" help:"Activate an existing generation by number."`
+	Config       configCommands   `cmd:"" help:"Inspect configuration settings."`
+	Profile      profileCommands  `cmd:"" help:"Inspect saved sync profiles."`
+	Prune        struct{}         `cmd:"" help:"Remove old, inactive generations."`
+	Reset        struct{}         `cmd:"" help:"Back up configuration and reset managed links."`
+	Modes        struct{}         `cmd:"" help:"Explain the available modes and their options."`
 	operation    string
 }
 type renderFlags struct {
@@ -35,16 +37,21 @@ type generationFlags struct {
 	SaveProfile *string `placeholder:"NAME" help:"Save resolved sync settings to a named JSON profile after activation."`
 }
 
-func Main() int {
+func Main(version string) int {
 	var args cli
-	parser := kong.Must(&args, kong.Name("agentbld"), kong.Description("Render read-only agent-config generations and sync them to selected harnesses."))
+	parser := kong.Must(&args,
+		kong.Name("agentbld"),
+		kong.Description("Render read-only agent-config generations and sync them to selected harnesses."),
+		kong.Vars{"version": version},
+	)
 	ctx, err := parser.Parse(os.Args[1:])
 	if err != nil {
 		fmt.Fprintln(os.Stderr, "error:", err)
 		return 2
 	}
 	args.operation = strings.Fields(ctx.Command())[0]
-	if args.operation == "profile" {
+	switch args.operation {
+	case "profile", "config":
 		args.operation += " " + ctx.Selected().Name
 	}
 	if args.operation == "modes" {
@@ -99,6 +106,8 @@ func printConfig(command string, registry engine.Registry, s engine.Snapshot, nu
 
 func run(a cli) (int, error) {
 	switch a.operation {
+	case "config paths":
+		return 0, printPaths(a)
 	case "profile list":
 		return 0, listProfiles()
 	case "profile show":

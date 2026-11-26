@@ -79,7 +79,7 @@ func ManagedHarnessLink(link, root, harness, component string, instruction bool)
 	if !instruction {
 		destination = filepath.Dir(destination)
 	}
-	base := filepath.Join(root, ".targets", harness, TargetHash(destination))
+	base := filepath.Join(root, TargetsDir, harness, TargetHash(destination))
 	rel, err := filepath.Rel(base, target)
 	if err != nil {
 		return false

@@ -13,8 +13,9 @@ func TestCLICommandHelp(t *testing.T) {
 		args         []string
 		want, absent []string
 	}{
-		{"root", []string{"--help"}, []string{"<command>", "render", "check", "sync", "prune", "reset", "profile"}, []string{"<operation>"}},
+		{"root", []string{"--help"}, []string{"--version", "<command>", "render", "check", "sync", "prune", "reset", "profile", "config"}, []string{"<operation>"}},
 		{"sync", []string{"sync", "--help"}, []string{"agentbld sync", "--profile", "--save-profile"}, []string{"--home"}},
+		{"config", []string{"config", "--help"}, []string{"agentbld config", "paths"}, nil},
 		{"profile", []string{"profile", "--help"}, []string{"agentbld profile", "list", "show"}, nil},
 		{"render", []string{"render", "--help"}, []string{"agentbld render", "immutable generation", "--sync"}, []string{"--instructions-only", "--rules-only", "--skill-marketplace"}},
 		{"check", []string{"check", "--help"}, []string{"agentbld check", "latest generation"}, []string{"--skill-marketplace"}},
@@ -80,5 +81,16 @@ func TestCLISharedFlagsBeforeAndAfterCommand(t *testing.T) {
 	after := append([]string{"check"}, common...)
 	if out, err := exec.Command(contractBinary, after...).CombinedOutput(); err != nil {
 		t.Fatalf("flags after command: %v\n%s", err, out)
+	}
+}
+
+func TestCLIVersion(t *testing.T) {
+	out, err := exec.Command(contractBinary, "--version").CombinedOutput()
+	if err != nil {
+		t.Fatalf("version: %v\n%s", err, out)
+	}
+	version := strings.TrimSuffix(string(out), "\n")
+	if build, ok := strings.CutPrefix(version, "agentbld "); !ok || build == "" || strings.Contains(build, "\n") {
+		t.Fatalf("unexpected development version %q", version)
 	}
 }

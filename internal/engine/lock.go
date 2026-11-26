@@ -7,6 +7,8 @@ import (
 	"syscall"
 )
 
+const RenderLockFile = ".agentbld.lock"
+
 // LockRenderRoot serializes generation and target mutations across processes.
 // The kernel releases the advisory lock even if a process exits unexpectedly.
 func LockRenderRoot(root string, create bool) (func(), error) {
@@ -23,7 +25,7 @@ func LockRenderRoot(root string, create bool) (func(), error) {
 	if err := ValidDir(root, "render root"); err != nil {
 		return nil, err
 	}
-	path := filepath.Join(root, ".agentbld.lock")
+	path := filepath.Join(root, RenderLockFile)
 	fd, err := syscall.Open(path, syscall.O_CREAT|syscall.O_RDWR|syscall.O_CLOEXEC|syscall.O_NOFOLLOW, 0600)
 	if err != nil {
 		return nil, fmt.Errorf("open render lock %s: %w", path, err)
