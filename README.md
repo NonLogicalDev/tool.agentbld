@@ -274,7 +274,7 @@ claude plugin install skillset@agentbld
 ## Releases
 
 - Push a semantic version tag such as `v0.1.0` to trigger the GitHub release workflow.
-- GoReleaser packages macOS and Linux binaries for amd64 and arm64, with SHA-256 checksums.
+- GoReleaser publishes macOS arm64 and Linux amd64 and arm64 archives with SHA-256 checksums.
 - `agentbld --version` prints the release version and full commit hash.
 - Build release artifacts locally with a snapshot.
 

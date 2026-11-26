@@ -10,7 +10,7 @@
       ../go.sum
     ];
   },
-  version ? "0.0.0-unstable",
+  version ? "0.1.0",
   revision ? null,
 }:
 
