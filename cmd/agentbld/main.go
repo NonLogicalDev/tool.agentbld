@@ -3,7 +3,7 @@ package main
 import (
 	"os"
 
-	"github.com/NonLogicalDev/conf.agents/utils/agentbld/internal"
+	"github.com/NonLogicalDev/tool.agentbld/internal"
 )
 
 func main() {

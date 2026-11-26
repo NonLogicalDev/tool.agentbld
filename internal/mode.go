@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/NonLogicalDev/conf.agents/utils/agentbld/internal/engine"
+	"github.com/NonLogicalDev/tool.agentbld/internal/engine"
 )
 
 type resolvedModes = map[string]any
@@ -65,7 +65,7 @@ harnesses. Without a filter, sync activates all harnesses in the generation.`)
 	for _, name := range names {
 		fmt.Println("\n" + registry[name].ModeHelp)
 	}
-	fmt.Println("\nExamples (run from the repository root):")
+	fmt.Println("\nExamples (run from your configuration repository):")
 	for _, name := range names {
 		fmt.Println(registry[name].Examples)
 	}

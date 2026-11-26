@@ -10,7 +10,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/NonLogicalDev/conf.agents/utils/agentbld/internal/engine"
+	"github.com/NonLogicalDev/tool.agentbld/internal/engine"
 )
 
 func marketplaceFixture(t *testing.T) (*engine.RenderPlan, string) {

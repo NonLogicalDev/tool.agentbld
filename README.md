@@ -9,16 +9,16 @@ Render layered agent configuration into read-only generations and sync them to y
 | Use | Version suffix |
 | --- | --- |
 | Track the main branch | `@main` |
-| Pin a tagged release | `@vX.Y.Z`, from tag `utils/agentbld/vX.Y.Z` |
+| Pin a release once tagged | `@vX.Y.Z` |
 
 ```sh
-go run github.com/NonLogicalDev/conf.agents/utils/agentbld@main --help
-go install github.com/NonLogicalDev/conf.agents/utils/agentbld@main
+go run github.com/NonLogicalDev/tool.agentbld/cmd/agentbld@main --help
+go install github.com/NonLogicalDev/tool.agentbld/cmd/agentbld@main
 ```
 
 ## Configuration layout
 
-- See [source sections](../../README.md#source-sections) for layering, fragments, and placeholders.
+- Pass your own sections directory with `--sections-dir`. See [source sections][source-sections] for the format.
 
 ```text
 sections/
@@ -89,7 +89,7 @@ ${XDG_STATE_HOME:-$HOME/.local/state}/agentbld/
   - Requires the current generation layout and `config.json`. Render into a fresh state directory when upgrading.
 
 ```sh
-# From the repository root.
+# Run from the directory that contains your sections/.
 agentbld render --sections-dir "$PWD/sections"
 agentbld check --sections-dir "$PWD/sections"
 agentbld render --sync --sections-dir "$PWD/sections"
@@ -161,7 +161,7 @@ agentbld sync 3 --profile default
 | `--codex-dir` | `${CODEX_HOME:-$HOME/.codex}` |
 | `--codex-marketplace-home` | `$HOME/.agents/plugins` |
 
-See [Codex examples, mode options and command rules](../../README.md#codex).
+See [Codex examples, mode options and command rules][codex-config].
 
 ### OpenCode
 
@@ -206,7 +206,7 @@ claude plugin install skillset@agentbld
 
 ## Development
 
-- **Entry point and CLI** — `utils/agentbld/main.go` and `internal/`.
+- **Entry point and CLI** — `cmd/agentbld/main.go` and `internal/`.
 - **Shared engine code** — `internal/engine/` handles source layering, generation storage, replay, and managed links.
   - Shared filesystem helpers also live here.
 - **Harness engines** — under `internal/harnesses/`
@@ -216,4 +216,12 @@ claude plugin install skillset@agentbld
 - **Tests**
   - Unit tests live beside the code they exercise.
   - CLI integration tests build and run the binary from `internal/integration_tests/`.
-  - Run `go -C utils/agentbld test ./...` from the repository root.
+  - Run `go test ./...` from the repository root.
+
+## History
+
+Agentbld was extracted from [NonLogicalDev/conf.agents][original-source] with its Git history.
+
+[source-sections]: https://github.com/NonLogicalDev/conf.agents#source-sections
+[codex-config]: https://github.com/NonLogicalDev/conf.agents#codex
+[original-source]: https://github.com/NonLogicalDev/conf.agents/tree/819153a/utils/agentbld

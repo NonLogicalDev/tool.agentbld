@@ -5,7 +5,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/NonLogicalDev/conf.agents/utils/agentbld/internal/engine"
+	"github.com/NonLogicalDev/tool.agentbld/internal/engine"
 )
 
 // Handler integrates Claude Code's personal instructions and skills with

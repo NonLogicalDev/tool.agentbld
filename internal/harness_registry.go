@@ -1,10 +1,10 @@
 package internal
 
 import (
-	"github.com/NonLogicalDev/conf.agents/utils/agentbld/internal/engine"
-	"github.com/NonLogicalDev/conf.agents/utils/agentbld/internal/harnesses/harness_claude"
-	"github.com/NonLogicalDev/conf.agents/utils/agentbld/internal/harnesses/harness_codex"
-	"github.com/NonLogicalDev/conf.agents/utils/agentbld/internal/harnesses/harness_opencode"
+	"github.com/NonLogicalDev/tool.agentbld/internal/engine"
+	"github.com/NonLogicalDev/tool.agentbld/internal/harnesses/harness_claude"
+	"github.com/NonLogicalDev/tool.agentbld/internal/harnesses/harness_codex"
+	"github.com/NonLogicalDev/tool.agentbld/internal/harnesses/harness_opencode"
 )
 
 type harnessOptions struct {

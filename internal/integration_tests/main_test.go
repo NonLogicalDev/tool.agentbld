@@ -21,7 +21,7 @@ func TestMain(m *testing.M) {
 		os.Exit(1)
 	}
 	contractBinary = filepath.Join(dir, "agentbld")
-	cmd := exec.Command("go", "build", "-o", contractBinary, "../..")
+	cmd := exec.Command("go", "build", "-o", contractBinary, "../../cmd/agentbld")
 	cmd.Stdout, cmd.Stderr = os.Stdout, os.Stderr
 	if err := cmd.Run(); err != nil {
 		os.RemoveAll(dir)

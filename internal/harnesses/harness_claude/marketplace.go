@@ -8,7 +8,7 @@ import (
 	"reflect"
 	"strings"
 
-	"github.com/NonLogicalDev/conf.agents/utils/agentbld/internal/engine"
+	"github.com/NonLogicalDev/tool.agentbld/internal/engine"
 )
 
 const claudeManagedMarker = ".managed-skillset.json"

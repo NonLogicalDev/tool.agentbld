@@ -9,7 +9,7 @@ import (
 
 	"github.com/alecthomas/kong"
 
-	"github.com/NonLogicalDev/conf.agents/utils/agentbld/internal/engine"
+	"github.com/NonLogicalDev/tool.agentbld/internal/engine"
 )
 
 type cli struct {

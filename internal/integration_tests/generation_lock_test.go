@@ -8,7 +8,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/NonLogicalDev/conf.agents/utils/agentbld/internal/engine"
+	"github.com/NonLogicalDev/tool.agentbld/internal/engine"
 )
 
 // The helper runs in a separate process so the test exercises the real OS lock.

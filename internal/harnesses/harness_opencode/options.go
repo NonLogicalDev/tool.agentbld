@@ -3,7 +3,7 @@ package harness_opencode
 import (
 	"encoding/json"
 
-	"github.com/NonLogicalDev/conf.agents/utils/agentbld/internal/engine"
+	"github.com/NonLogicalDev/tool.agentbld/internal/engine"
 )
 
 const Name = "opencode"

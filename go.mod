@@ -1,4 +1,4 @@
-module github.com/NonLogicalDev/conf.agents/utils/agentbld
+module github.com/NonLogicalDev/tool.agentbld
 
 go 1.24
 

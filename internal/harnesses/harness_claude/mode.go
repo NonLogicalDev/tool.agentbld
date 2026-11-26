@@ -9,7 +9,7 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/NonLogicalDev/conf.agents/utils/agentbld/internal/engine"
+	"github.com/NonLogicalDev/tool.agentbld/internal/engine"
 )
 
 // claudeMode selects Claude instructions, standalone skills, and plugin output.

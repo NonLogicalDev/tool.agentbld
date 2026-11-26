@@ -3,7 +3,7 @@ package harness_codex
 import (
 	"fmt"
 
-	"github.com/NonLogicalDev/conf.agents/utils/agentbld/internal/engine"
+	"github.com/NonLogicalDev/tool.agentbld/internal/engine"
 )
 
 func Handler(options *Options) engine.Handler {

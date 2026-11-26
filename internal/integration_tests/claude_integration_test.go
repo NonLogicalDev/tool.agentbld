@@ -6,7 +6,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/NonLogicalDev/conf.agents/utils/agentbld/internal/harnesses/harness_claude"
+	"github.com/NonLogicalDev/tool.agentbld/internal/harnesses/harness_claude"
 )
 
 func TestClaudeRenderAndHistoricalSync(t *testing.T) {

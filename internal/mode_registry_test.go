@@ -7,7 +7,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/NonLogicalDev/conf.agents/utils/agentbld/internal/engine"
+	"github.com/NonLogicalDev/tool.agentbld/internal/engine"
 )
 
 type testAlphaMode struct {

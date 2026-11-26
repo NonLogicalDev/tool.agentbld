@@ -8,7 +8,7 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/NonLogicalDev/conf.agents/utils/agentbld/internal/engine"
+	"github.com/NonLogicalDev/tool.agentbld/internal/engine"
 )
 
 type profileCommands struct {
